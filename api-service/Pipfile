@@ -1,0 +1,24 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+uvicorn = "*"
+fastapi = "*"
+google-auth = "*"
+google-cloud-storage = "*"
+tensorflow = "*"
+pandas = "*"
+efficientnet = "*"
+faiss = "*"
+numpy = "*"
+opencv-python = "*"
+pyarrow = "*"
+faiss-cpu = "*"
+python-multipart = "*"
+
+[requires]
+python_version = "3.7"
