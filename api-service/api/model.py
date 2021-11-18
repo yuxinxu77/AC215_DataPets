@@ -173,6 +173,7 @@ def make_predict(image_path):
     
     return pred_json
 
+# this is for testing
 # if __name__ == "__main__":
 #     print(os.path.join(dataset_local_path, 'docker_test.jpg'))
 #     make_predict(os.path.join(dataset_local_path, 'docker_test.jpg'))

@@ -35,6 +35,9 @@ async def predict(
 ):
     print("predict file:", len(file), type(file))
 
+    # download packages
+    model.download_datasets_packages()
+    
     # Save the image
     with TemporaryDirectory() as image_dir:
         image_path = os.path.join(image_dir, "test.png")
