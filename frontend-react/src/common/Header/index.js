@@ -64,13 +64,9 @@ const Header = (props) => {
                             <Icon>home</Icon>
                             <Typography variant="caption">&nbsp;Home</Typography>
                         </IconButton>
-                        <IconButton color="inherit" component={Link} to="/leaderboard">
-                            <Icon>leaderboard</Icon>
-                            <Typography variant="caption">&nbsp;Leaderboard</Typography>
-                        </IconButton>
-                        <IconButton color="inherit" component={Link} to="/currentmodel">
-                            <Icon>model_training</Icon>
-                            <Typography variant="caption">&nbsp;Model</Typography>
+                        <IconButton color="inherit" component={Link} to="/chatwindow">
+                            <Icon>chat</Icon>
+                            <Typography variant="caption">&nbsp;Chatwindow</Typography>
                         </IconButton>
                         {/* <IconButton color="inherit">
                             <Icon>login</Icon>
@@ -95,16 +91,9 @@ const Header = (props) => {
                         </List>
                         <Divider />
                         <List>
-                            <ListItem button key='menuitem12' component={Link} to="/leaderboard">
-                                <ListItemIcon><Icon>leaderboard</Icon></ListItemIcon>
-                                <ListItemText primary='Leaderboard' />
-                            </ListItem>
-
-                        </List>
-                        <List>
-                            <ListItem button key='menuitem12' component={Link} to="/currentmodel">
-                                <ListItemIcon><Icon>star</Icon></ListItemIcon>
-                                <ListItemText primary='Current Model' />
+                            <ListItem button key='menuitem12' component={Link} to="/chatwindow">
+                                <ListItemIcon><Icon>chat</Icon></ListItemIcon>
+                                <ListItemText primary='Chatwindow' />
                             </ListItem>
                         </List>
                     </div>
