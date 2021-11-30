@@ -67,13 +67,13 @@ estions about puppies and dogs.
       ├── submissions
       │             ├── milestone1_DataPets
       │             ├── milestone2_DataPets
-      │             └── milestone3_DataPets
+      │             └── milestone3_DataPets                 <- refer here for milestone and latest updates
       └── test_project.py
 
 --------
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/
-">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+">cookiecutter data science project template</a>.
 
 ## Proposed solution
 
@@ -81,24 +81,8 @@ In order to achieve this goal, we proposed the following solutions:
 
 - Help the user search based on the dog's characteristics, such as age, size, color, breed.
 - Find similar dogs by uploading a picture of a dog the user is interested in.
-- Connect the dog with the user by allowing the user to chat with a persona of the dog. For example, the user c
-an ask this virtual dog any question about it, its breed characteristics, or any general questions about puppie
-s and dogs.
-- As an adoption center, when new images are available for dogs a function will be available to upload images o
-f the dog:
-    * Remove noisy background from the picture.
-    * Add a preset background
-    * Enhance the image if the resolution of the uploaded picture is not good.
-
-
-
-- Help the user search based on the dog's characteristics, such as age, size, color, breed.
-- Find similar dogs by uploading a picture of a dog the user is interested in.
-- Connect the dog with the user by allowing the user to chat with a persona of the dog. For example, the user c
-an ask this virtual dog any question about it, its breed characteristics, or any general questions about puppie
-s and dogs.
-- As an adoption center, when new images are available for dogs a function will be available to upload images o
-f the dog:
+- Connect the dog with the user by allowing the user to chat with a persona of the dog. For example, the user can ask this virtual dog any question about it, its breed characteristics, or any general questions about puppies and dogs.
+- As an adoption center, when new images are available for dogs a function will be available to upload images of the dog:
     * Remove noisy background from the picture.
     * Add a preset background
     * Enhance the image if the resolution of the uploaded picture is not good.
