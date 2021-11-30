@@ -26,21 +26,48 @@ estions about puppies and dogs.
 ------------
       .
       ├── LICENSE
-      ├── Makefile
+      ├── api-service/
+      │             ├── api/
+      │             ├── Dockerfile
+      │             ├── Pipfile
+      │             ├── Pipfile.lock
+      │             ├── docker-entrypoint.sh
+      │             └── docker-shell.sh
+      ├── deployment/
+      │             ├── Dockerfile
+      │             ├── ansible.cfg
+      │             ├── deploy-create-instance.yml
+      │             ├── deploy-docker-images.yml
+      │             ├── deploy-k8s-cluster.yml
+      │             ├── deploy-provision-instance.yml
+      │             ├── deploy-setup-containers.yml
+      │             ├── deploy-setup-webserver.yml
+      │             ├── docker-entrypoint.sh
+      │             ├── docker-shell.sh
+      │             └── inventory.yml
+      ├── frontend-html/ (simple frontend)
+      ├── frontend-react/
+      │             ├── src/
+      │             │            ├── app/     
+      │             │            ├── common/   
+      │             │            ├── components/
+      │             │            ├── services/
+      │             │            ├── index.css
+      │             │            └── index.js 
+      │             ├── Dockerfile
+      │             ├── Dockerfile.dev
+      │             ├── docker-shell.sh
+      │             ├── package.json
+      │             └── yarn.lock
       ├── README.md
-      ├── models
-      ├── notebooks
-      ├── references
-      ├── requirements.txt
-      ├── setup.py
+      ├── secrets/
       ├── src
-      │   ├── __init__.py
-      │   └── build_features.py
+      │             ├── __init__.py
+      │             └── build_features.py
       ├── submissions
-      │   ├── milestone1_groupname
-      │   ├── milestone2_groupname
-      │   ├── milestone3_groupname
-      │   └── milestone4_groupname
+      │             ├── milestone1_DataPets
+      │             ├── milestone2_DataPets
+      │             └── milestone3_DataPets
       └── test_project.py
 
 --------
@@ -79,8 +106,7 @@ f the dog:
 
 ## Our Data
 
-APA makes available a repository for its animals that is roughly ~17k dog records and close to 40k for total animals. For the ~40k pets there looks to be ~140k photos. Here is a list of publicly accessible URLs such as t
-his [example](https://www.shelterluv.com/sites/default/files/animal_pics/464/2018/07/11/21/20180711213702.png),
+APA makes available a repository for its animals that is roughly ~17k dog records and close to 40k for total animals. For the ~40k pets there looks to be ~140k photos. Here is a list of publicly accessible URLs such as this [example](https://www.shelterluv.com/sites/default/files/animal_pics/464/2018/07/11/21/20180711213702.png),
 so a part of the project would be some data wrangling to go grab and persist the photos somewhere.
 
 Our dataset consists of three csv files [Dataset Link](https://drive.google.com/drive/folders/1LCYLVkwZSHfkKvJUXs3EtHWRjUSUWZGy?usp=sharing). The most important of the csv's holds the metadata information listing the following features:
@@ -107,33 +133,31 @@ torm](https://console.cloud.google.com/storage/browser?project=ac215-data-pets&p
 
 ## __Pipeline and Workflow__
 
-Build Vision Models:
+**Computer Vision Models**:
 
 We have used specifically the [DeepLabv3 Plus model](https://github.com/AvivSham/DeepLabv3) for our segmentation of dog images as well as for removing background of user uploaded dog images for better feature extractions.
 
 To return our matched images from database, we first created embeddings using [EfficientNet B0](https://arxiv.org/pdf/1905.11946.pdf) for all dog images and saved them in GCP. We then used [Facebook AI Similarity Search (FAISS)](https://github.com/facebookresearch/faiss), developed by Facebook for efficient similarity search to yield our best matched dogs' photos (5 photos according to uploaded image).
 
 
-
-Build Language Models:
-Workshop will be an in-depth tutorial on transfer learning for natural language. Will cover state of the art mo
-dels and how to perform transfer learning in general with practical examples. Topics that will be covered:
-
-Concepts:
+**Language Models**:
 
 Seq2Seq
 Attention & Self-attention
 Transformers
 Transfer learning
 SOTA models - some flavor of BERT
-
 Language models
 Question answering models
 Dialog models
+
+
+The next task was creating a persona of the dog that the user has searched and allow users to ask more information regarding the dog by directly chatting with the persona. To implement a baseline model, we used the BERT question and answering model, which was trained on the Stanford Question Answering Dataset (SQuAD) [4]. We will provide sample questions and reference text to the model and let the model predict the start and end token of a “span” of text which acts as the output answer. We followed the main steps from Shivas’ notebook in 2021 ComputeFest [5] and the tutorial by Chris McCormmick. 
+
+
 Notebook to App:
 Workshop will be an in-depth tutorial on bringing code from notebooks to self contained environments. Will cove
-r different options for python environments with a primary focus on containerized development. Topics that will
- be covered:
+r different options for python environments with a primary focus on containerized development. 
 
 Our App requires our deployment of the following containers
 
