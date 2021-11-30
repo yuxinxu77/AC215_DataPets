@@ -27,8 +27,8 @@ estions about puppies and dogs.
       .
       ├── LICENSE
       ├── api-service/
-      │             ├── api/
-      │             ├── Dockerfile
+      │             ├── api/                               <- Where we currently have the Deeplab model
+      │             ├── Dockerfile                               
       │             ├── Pipfile
       │             ├── Pipfile.lock
       │             ├── docker-entrypoint.sh
@@ -45,12 +45,12 @@ estions about puppies and dogs.
       │             ├── docker-entrypoint.sh
       │             ├── docker-shell.sh
       │             └── inventory.yml
-      ├── frontend-html/ (simple frontend)
+      ├── frontend-html/ (simple frontend)                  <- HTML version of frontend simple
       ├── frontend-react/
       │             ├── src/
-      │             │            ├── app/     
-      │             │            ├── common/   
-      │             │            ├── components/
+      │             │            ├── app/                                 
+      │             │            ├── common/                <- common folder for React app   
+      │             │            ├── components/            <- components folder for React app
       │             │            ├── services/
       │             │            ├── index.css
       │             │            └── index.js 
@@ -60,7 +60,7 @@ estions about puppies and dogs.
       │             ├── package.json
       │             └── yarn.lock
       ├── README.md
-      ├── secrets/
+      ├── secrets/                                          <- stores the GCP credentials(bucket-reader)
       ├── src
       │             ├── __init__.py
       │             └── build_features.py
@@ -106,9 +106,7 @@ f the dog:
 
 ## Our Data
 
-APA makes available a repository for its animals that is roughly ~17k dog records and close to 40k for total animals. For the ~40k pets there looks to be ~140k photos. Here is a list of publicly accessible URLs such as this [example](https://www.shelterluv.com/sites/default/files/animal_pics/464/2018/07/11/21/20180711213702.png),
-so a part of the project would be some data wrangling to go grab and persist the photos somewhere.
-
+APA makes available a repository for its animals that is roughly ~17k dog records and close to 40k for total animals. For the ~40k pets there looks to be ~140k photos. Here is a list of publicly accessible URLs such as this [example](https://www.shelterluv.com/sites/default/files/animal_pics/464/2018/07/11/21/20180711213702.png), so a part of the project would be some data wrangling to go grab and persist the photos somewhere.
 Our dataset consists of three csv files [Dataset Link](https://drive.google.com/drive/folders/1LCYLVkwZSHfkKvJUXs3EtHWRjUSUWZGy?usp=sharing). The most important of the csv's holds the metadata information listing the following features:
 
 | Field | Description |
@@ -142,25 +140,16 @@ To return our matched images from database, we first created embeddings using [E
 
 **Language Models**:
 
-Seq2Seq
-Attention & Self-attention
-Transformers
-Transfer learning
-SOTA models - some flavor of BERT
-Language models
-Question answering models
-Dialog models
+The next task was creating a persona of the dog that the user has searched and allow users to ask more information regarding the dog by directly chatting with the persona. To implement a baseline model, we used the BERT question and answering model, which was trained on the Stanford Question Answering Dataset (SQuAD). We will provide sample questions and reference text to the model and let the model predict the start and end token of a “span” of text which acts as the output answer. We followed the main steps from Shivas’ notebook in 2021 ComputeFest and the tutorial by Chris McCormmick. We then decided to try generative-based language models, GPT2 for question and answering tasks. We fine-tuned the GPT2 model with specific context on which the dogs were based. The resulting Q&A outputs are quite good, and we displayed some of the examples. For further details, refer to [Milestone3_DataPets](https://github.com/yuxinxu77/AC215_DataPets/tree/main/submissions/milestone3_DataPets).
 
 
-The next task was creating a persona of the dog that the user has searched and allow users to ask more information regarding the dog by directly chatting with the persona. To implement a baseline model, we used the BERT question and answering model, which was trained on the Stanford Question Answering Dataset (SQuAD) [4]. We will provide sample questions and reference text to the model and let the model predict the start and end token of a “span” of text which acts as the output answer. We followed the main steps from Shivas’ notebook in 2021 ComputeFest [5] and the tutorial by Chris McCormmick. 
-
-
-Notebook to App:
-Workshop will be an in-depth tutorial on bringing code from notebooks to self contained environments. Will cove
-r different options for python environments with a primary focus on containerized development. 
+**Containerized Development**:
 
 Our App requires our deployment of the following containers
 
-API container
-Frontend
+`API container` - where we currently have all CV related models for segmentation, creating embeddings and returning embeddings search. We also plan to include our GPT2 language model into this section soon.
+
+`Deployment` - where the Data Pets app is deployed using ansible in GCP instance.
+
+`Frontend-React` - where the frontend appearance of the app will be ran including the model's output of similar dogs interface. We will also include th
 
