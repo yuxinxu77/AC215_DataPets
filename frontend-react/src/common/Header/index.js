@@ -91,7 +91,7 @@ const Header = (props) => {
                         </List>
                         <Divider />
                         <List>
-                            <ListItem button key='menuitem12' component={Link} to="/currentmodel">
+                            <ListItem button key='menuitem12' component={Link} to="/chatwindow">
                                 <ListItemIcon><Icon>chat</Icon></ListItemIcon>
                                 <ListItemText primary='Chatwindow' />
                             </ListItem>
