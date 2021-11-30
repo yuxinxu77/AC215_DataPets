@@ -135,5 +135,5 @@ Our App requires our deployment of the following containers
 
 `Deployment` - where the Data Pets app is deployed using ansible in GCP instance.
 
-`Frontend-React` - where the frontend appearance of the app will be ran including the model's output of similar dogs interface. We will also include th
+`Frontend-React` - where the frontend appearance of the app will be ran including the model's output of similar dogs interface. We will also include the chatbox interface in the React frontend after connecting our NLP model.
 
