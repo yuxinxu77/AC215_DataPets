@@ -61,7 +61,7 @@ estions about puppies and dogs.
       │             └── yarn.lock
       ├── README.md
       ├── secrets/                                          <- stores the GCP credentials(bucket-reader)
-      ├── src
+      ├── src/
       │             ├── __init__.py
       │             └── build_features.py
       ├── submissions
