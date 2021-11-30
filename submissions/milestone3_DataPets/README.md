@@ -60,7 +60,7 @@ estions about puppies and dogs.
       │             ├── package.json
       │             └── yarn.lock
       ├── README.md
-      ├── secrets/                                          <- stores the GCP credentials(bucket-reader)
+      ├── secrets/                                          <- stores the *.jsons(bucket, deployment, gcp-service)
       ├── src/
       │             ├── __init__.py
       │             └── build_features.py
