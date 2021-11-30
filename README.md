@@ -64,9 +64,7 @@ f the dog:
     * Enhance the image if the resolution of the uploaded picture is not good.
 
 
-## Regarding Our Data
 
-APA makes available a repository for its animals that is roughly ~17k dog records and close to 40k if you inclu
 - Help the user search based on the dog's characteristics, such as age, size, color, breed.
 - Find similar dogs by uploading a picture of a dog the user is interested in.
 - Connect the dog with the user by allowing the user to chat with a persona of the dog. For example, the user c
@@ -76,20 +74,16 @@ s and dogs.
 f the dog:
     * Remove noisy background from the picture.
     * Add a preset background
-    *  Enhance the image if the resolution of the uploaded picture is not good.
+    * Enhance the image if the resolution of the uploaded picture is not good.
 
 
-## Regarding Our Data
+## Our Data
 
-APA makes available a repository for its animals that is roughly ~17k dog records and close to 40k if you inclu
-de cats. For the ~40k pets there looks to be ~140k photos. Here is a list of publicly accessible URLs such as t
+APA makes available a repository for its animals that is roughly ~17k dog records and close to 40k for total animals. For the ~40k pets there looks to be ~140k photos. Here is a list of publicly accessible URLs such as t
 his [example](https://www.shelterluv.com/sites/default/files/animal_pics/464/2018/07/11/21/20180711213702.png),
- so a part of the project would be some data wrangling to go grab and persist the photos somewhere. The dogs da
-ta specifically
+so a part of the project would be some data wrangling to go grab and persist the photos somewhere.
 
-Our dataset consists of three csv files [Dataset Link](https://drive.google.com/drive/folders/1LCYLVkwZSHfkKvJU
-Xs3EtHWRjUSUWZGy?usp=sharing). The most important of the csv's holds the metadata information listing the follo
-wing features:
+Our dataset consists of three csv files [Dataset Link](https://drive.google.com/drive/folders/1LCYLVkwZSHfkKvJUXs3EtHWRjUSUWZGy?usp=sharing). The most important of the csv's holds the metadata information listing the following features:
 
 | Field | Description |
 |---|---|
@@ -108,8 +102,7 @@ AnimalColor | concatenation of primary and secondary colors fields delimited by 
 AnimalPattern | animal pattern NOTE: not often populated for dogs. More often used for cats
 
 The dog images accessible to us are stored and readily available to us in our AC215 Data Pets [Google Cloud Pla
-torm](https://console.cloud.google.com/storage/browser?project=ac215-data-pets&prefix=&forceOnObjectsSortingFil
-tering=false&pageState=(%22GcsBucketList%22:(%22f%22:%22%255B%255D%22))) .
+torm](https://console.cloud.google.com/storage/browser?project=ac215-data-pets&prefix=&forceOnObjectsSortingFiltering=false&pageState=(%22GcsBucketList%22:(%22f%22:%22%255B%255D%22))) 
 
 
 ## __Pipeline and Workflow__
