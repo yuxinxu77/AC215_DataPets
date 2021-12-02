@@ -11,6 +11,7 @@
     "@testing-library/user-event": "^12.1.10",
     "axios": "^0.21.1",
     "react": "^17.0.1",
+    "react-chat-widget": "3.0.5",
     "react-dom": "^17.0.1",
     "react-number-format": "^4.7.3",
     "react-router-dom": "^5.2.0",
@@ -25,8 +26,7 @@
   },
   "eslintConfig": {
     "extends": [
-      "react-app",
-      "react-app/jest"
+      "react-app"
     ]
   },
   "browserslist": {
@@ -43,5 +43,8 @@
   },
   "resolutions": {
     "react-scripts/eslint-webpack-plugin": "2.3.0"
+  },
+  "rules": {
+    "no-unused-vars": "off"
   }
 }

@@ -20,7 +20,8 @@ const styles = theme => ({
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        margin: "20px",
+        padding: "20px 10px 10px",
+        margin: "60px",
         borderWidth: "2px",
         borderRadius: "2px",
         borderColor: "#cccccc",
@@ -38,7 +39,12 @@ const styles = theme => ({
         display: "none",
     },
     preview: {
-        width: "100%",
+        height: "400px",
+        backgroundPosition: "center",
+    },
+    previewgrid: {
+        width: "200px",
+        height: "200px",
     },
     help: {
         color: "#302f2f"
@@ -46,9 +52,36 @@ const styles = theme => ({
     safe: {
         color: "#31a354",
     },
-    poisonous: {
-        color: "#de2d26",
+    gridList: {
+        height: 300,
+        width: 900,
     },
+    thumbnailImage: {
+        opacity: 0.80,
+        '&:hover': {
+            opacity: 1
+        }
+    },
+    predictionImage: {
+        height: 0,
+        paddingTop: '100%',
+        opacity: 0.7,
+    },
+    progressBar: {
+        position: "absolute",
+        top: "300px",
+        left: "48%",
+        color: "#ffffff"
+    },
+    media: {
+        height: 0,
+        paddingTop: '100%',
+    },
+    card: {
+        margin: 5,
+        // height: 250,
+        // width: '23%',
+    }
 });
 
 export default styles;

@@ -1,3 +1,4 @@
+/* eslint-disable */ 
 import React, { useEffect, useRef, useState } from 'react';
 import { withStyles } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
@@ -19,8 +20,8 @@ const Footer = (props) => {
 
     return (
         <div className={classes.root}>
-            <Typography align='center'>
-                Mushroom Identifier App
+            <Typography align='left' variant="caption">
+                Copyright © 2021 Harvard AC215 DataPets. All rights reserved.
             </Typography>
 
         </div>

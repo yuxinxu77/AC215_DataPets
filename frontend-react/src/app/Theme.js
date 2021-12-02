@@ -7,13 +7,13 @@ const Theme = createMuiTheme({
         type: 'light',
         primary: {
             // light: will be calculated from palette.primary.main,
-            main: '#A41034',
+            main: '#08815f',
             // dark: will be calculated from palette.primary.main,
             // contrastText: will be calculated to contrast with palette.primary.main
         },
         secondary: {
             light: '#0066ff',
-            main: '#A41034',
+            main: '#08815f',
             // dark: will be calculated from palette.secondary.main,
             contrastText: '#ffffff',
         },
@@ -28,19 +28,19 @@ const Theme = createMuiTheme({
     typography: {
         useNextVariants: true,
         h6: {
-            color: "#A41034",
+            color: "#08815f",
             fontSize: "1.1rem",
             fontFamily: "Roboto, Helvetica, Arial, sans-serif",
             fontWeight: 800
         },
         h5: {
-            color: "#A41034",
+            color: "#08815f",
             fontSize: "1.2rem",
             fontFamily: "Roboto, Helvetica, Arial, sans-serif",
             fontWeight: 800
         },
         h4: {
-            color: "#A41034",
+            color: "#08815f",
             fontSize: "1.8rem",
             fontFamily: "Roboto, Helvetica, Arial, sans-serif",
             fontWeight: 900
