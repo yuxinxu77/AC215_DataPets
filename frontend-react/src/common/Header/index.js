@@ -1,3 +1,4 @@
+/* eslint-disable */ 
 import React, { useState } from 'react';
 import { withStyles } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
@@ -52,7 +53,7 @@ const Header = (props) => {
                     </IconButton>
                     <Link to="/" className={classes.appLink}>
                         <Typography className={classes.appTitle} >
-                        🐶 Welcome to the dog matching App
+                        🐶 Welcome to Woof Woof App
                         </Typography>
                     </Link>
 
@@ -64,14 +65,14 @@ const Header = (props) => {
                             <Icon>home</Icon>
                             <Typography variant="caption">&nbsp;Home</Typography>
                         </IconButton>
-                        <IconButton color="inherit" component={Link} to="/leaderboard">
-                            <Icon>leaderboard</Icon>
-                            <Typography variant="caption">&nbsp;Leaderboard</Typography>
+                        <IconButton color="inherit" component={Link} to="/donation">
+                            <Icon>pets</Icon>
+                            <Typography variant="caption">&nbsp;Donation</Typography>
                         </IconButton>
-                        <IconButton color="inherit" component={Link} to="/currentmodel">
+                        {/* <IconButton color="inherit" component={Link} to="/currentmodel">
                             <Icon>model_training</Icon>
                             <Typography variant="caption">&nbsp;Model</Typography>
-                        </IconButton>
+                        </IconButton> */}
                         {/* <IconButton color="inherit">
                             <Icon>login</Icon>
                             <Typography variant="caption">&nbsp;Login</Typography>
@@ -95,18 +96,18 @@ const Header = (props) => {
                         </List>
                         <Divider />
                         <List>
-                            <ListItem button key='menuitem12' component={Link} to="/leaderboard">
-                                <ListItemIcon><Icon>leaderboard</Icon></ListItemIcon>
-                                <ListItemText primary='Leaderboard' />
+                            <ListItem button key='menuitem12' component={Link} to="/donation">
+                                <ListItemIcon><Icon>pets</Icon></ListItemIcon>
+                                <ListItemText primary='Donation' />
                             </ListItem>
 
                         </List>
-                        <List>
+                        {/* <List>
                             <ListItem button key='menuitem12' component={Link} to="/currentmodel">
                                 <ListItemIcon><Icon>star</Icon></ListItemIcon>
                                 <ListItemText primary='Current Model' />
                             </ListItem>
-                        </List>
+                        </List> */}
                     </div>
                 </div>
             </Drawer>

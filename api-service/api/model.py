@@ -136,7 +136,7 @@ def load_preprocess_image(image_path):
 
     return img_embedd
 
-def search(search_emb, k=5):
+def search(search_emb, k=8):
     # read in embeddings and photo csv
     emb = pq.read_table(os.path.join(dataset_local_path, 'embeddings')).to_pandas()    
     dogs_photos = pd.read_csv(os.path.join(dataset_local_path, 'dogs_photos.csv'))
@@ -164,16 +164,17 @@ def search(search_emb, k=5):
 
 
 def make_predict(image_path):
+    gcp_address = "https://storage.googleapis.com/dogs_img/dogs_resized/"
     img_embedd = load_preprocess_image(image_path)
     pred_image = search(img_embedd)
     # output json file
-    pred_json = {}
+    pred_list = []
     for i, filename in enumerate(list(zip(*pred_image))[1]):
-        pred_json['image_' + str(i+1)] = filename
+        pred_list.append(gcp_address+filename)
     
-    return pred_json
+    return pred_list
 
-# this is for testing
+# this is for debugging 
 # if __name__ == "__main__":
 #     print(os.path.join(dataset_local_path, 'docker_test.jpg'))
 #     make_predict(os.path.join(dataset_local_path, 'docker_test.jpg'))

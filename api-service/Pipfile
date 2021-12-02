@@ -13,12 +13,12 @@ google-cloud-storage = "*"
 tensorflow = "*"
 pandas = "*"
 efficientnet = "*"
-faiss = "*"
 numpy = "*"
 opencv-python = "*"
 pyarrow = "*"
 faiss-cpu = "*"
 python-multipart = "*"
+faiss-gpu = "*"
 
 [requires]
 python_version = "3.7"
