@@ -41,9 +41,9 @@ const Home = (props) => {
     const handleDogChat = (dog) => {
         dropMessages();
         console.log(dog);
-        setChatDog(dog);
+        //setChatDog(dog);
         if (isChatWidgetOpen()){
-            toggleWidget();
+            //toggleWidget();
         }
         addResponseMessage("Woof Woof! I'm " + dog.name + ".")
         addResponseMessage("Ask me anything.")
@@ -90,17 +90,18 @@ const Home = (props) => {
         var history = [...chatHistory];
         console.log(message);
         let chat = {
-            "dog":chatDog,
-            "history": history,
-            "input_message":message
+            "personality":chatDog.persona,
+            "history": chatDog.history,
+            "message":message
         }
         // Chat with backend API
         DataService.ChatWithDog(chat)
             .then(function (response) {
                 console.log(response.data);
                 let chat_response = response.data;
-                addResponseMessage(chat_response["response_message"]);
-                history.push(message);
+                addResponseMessage(chat_response["answer"]);
+                console.log(chat_response)
+                history.push(chat_response["question"]);
                 history.push(chat_response["response_message"]);
 
                 // if(history.length > 5){
@@ -137,6 +138,7 @@ const Home = (props) => {
             })
     }
     const ImageClicked = (img) => {
+        //dropMessages();
         setSelectedImage(img);
         console.log(img);
         DataService.GetDogMeta({"img": img})

@@ -19,6 +19,9 @@ pyarrow = "*"
 faiss-cpu = "*"
 python-multipart = "*"
 faiss-gpu = "*"
+transformers = "*"
+torch = "*"
+matplotlib = "*"
 
 [requires]
 python_version = "3.7"

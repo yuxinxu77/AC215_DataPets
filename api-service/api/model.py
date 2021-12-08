@@ -19,7 +19,9 @@ import collections
 import unicodedata
 from PIL import Image
 import matplotlib.pyplot as plt
+from itertools import chain
 
+# CV related 
 from api.deeplab.model import Deeplabv3
 
 from urllib.parse import urlparse
@@ -32,11 +34,24 @@ import faiss
 # Tensorflow
 import tensorflow as tf
 
-deeplab_local_path = "/persistent/models"
+# NLP related
+import torch
+from torch.cuda import amp
+import torch.nn.functional as F
+from transformers import GPT2Config, GPT2LMHeadModel, GPT2DoubleHeadsModel, GPT2Tokenizer
+
+# define global variables
+model_local_path = "/persistent/models"
 dataset_local_path = "/persistent/dataset"
+# CV
 IMG_SIZE = (224, 224)
 num_channels = 3
+# NLP
+SPECIAL_TOKENS = ["<bos>", "<eos>", "<speaker1>", "<speaker2>", "<pad>"]
+cuda_available = torch.cuda.is_available()
+device = torch.device("cuda:0" if cuda_available else "cpu")
 
+# main functions
 def download_file(packet_url, base_path="", file_path='', extract=False, headers=None):
   if base_path != "":
     if not os.path.exists(base_path):
@@ -174,8 +189,142 @@ def make_predict(image_path):
     
     return pred_list
 
+def download_language_model():
+    if not os.path.exists(model_local_path):
+        os.mkdir(model_local_path)
+        download_file("https://storage.googleapis.com/dogs_text/finetuned_model_epochs_1_IS.zip",
+                      base_path=model_local_path, extract=True)
+
+def build_input_from_segments(persona, history, reply, tokenizer, lm_labels=False, with_eos=True):
+    """ Build a sequence of input from 3 segments: persona, history and last reply. """
+    bos, eos, speaker1, speaker2 = tokenizer.convert_tokens_to_ids(SPECIAL_TOKENS[:-1])
+    sequence = [[bos] + list(chain(*persona))] + history + [reply + ([eos] if with_eos else [])]
+    sequence = [sequence[0]] + [
+        [speaker2 if (len(sequence) - i) % 2 else speaker1] + s for i, s in enumerate(sequence[1:])
+    ]
+    instance = {}
+    instance["input_ids"] = list(chain(*sequence))
+    instance["token_type_ids"] = [speaker2 if i % 2 else speaker1 for i, s in enumerate(sequence) for _ in s]
+    instance["mc_token_ids"] = len(instance["input_ids"]) - 1
+    instance["lm_labels"] = [-100] * len(instance["input_ids"])
+    if lm_labels:
+        instance["lm_labels"] = ([-100] * sum(len(s) for s in sequence[:-1])) + [-100] + sequence[-1][1:]
+    return instance
+
+
+def generate_sequence(personality, history, tokenizer, model, current_output=None):
+  with torch.no_grad():
+    with amp.autocast():
+      special_tokens_ids = tokenizer.convert_tokens_to_ids(SPECIAL_TOKENS)
+      if current_output is None:
+          current_output = []
+
+      # Args
+      max_length = 20
+      temperature = 0.7
+      top_k = 0
+      top_p = 0.9
+      do_sample = True
+      min_length = 1
+
+      for i in range(max_length):
+          instance = build_input_from_segments(
+              personality, history, current_output, tokenizer, with_eos=False
+          )
+
+          input_ids = torch.tensor(instance["input_ids"], device=device).unsqueeze(0)
+          token_type_ids = torch.tensor(instance["token_type_ids"], device=device).unsqueeze(0)
+
+          logits = model(input_ids, token_type_ids=token_type_ids)
+          logits = logits[0]
+
+          logits = logits[0, -1, :] / temperature
+          logits = top_filtering(logits, top_k=top_k, top_p=top_p)
+          probs = F.softmax(logits, dim=-1)
+
+          prev = torch.topk(probs, 1)[1] if not do_sample else torch.multinomial(probs, 1)
+          if i < min_length and prev.item() in special_tokens_ids:
+              while prev.item() in special_tokens_ids:
+                  if probs.max().item() == 1:
+                      break  # avoid infinite loop
+                  prev = torch.multinomial(probs, num_samples=1)
+
+          if prev.item() in special_tokens_ids:
+              break
+          current_output.append(prev.item())
+
+  return current_output
+
+def top_filtering(logits, top_k=0.0, top_p=0.9, threshold=-float("Inf"), filter_value=-float("Inf")):
+  top_k = min(top_k, logits.size(-1))
+  if top_k > 0:
+      # Remove all tokens with a probability less than the last token in the top-k tokens
+      indices_to_remove = logits < torch.topk(logits, top_k)[0][..., -1, None]
+      logits[indices_to_remove] = filter_value
+
+  if top_p > 0.0:
+      # Compute cumulative probabilities of sorted tokens
+      sorted_logits, sorted_indices = torch.sort(logits, descending=True)
+      cumulative_probabilities = torch.cumsum(F.softmax(sorted_logits, dim=-1), dim=-1)
+
+      # Remove tokens with cumulative probability above the threshold
+      sorted_indices_to_remove = cumulative_probabilities > top_p
+      # Shift the indices to the right to keep also the first token above the threshold
+      sorted_indices_to_remove[..., 1:] = sorted_indices_to_remove[..., :-1].clone()
+      sorted_indices_to_remove[..., 0] = 0
+
+      # Back to unsorted indices and set them to -infinity
+      indices_to_remove = sorted_indices[sorted_indices_to_remove]
+      logits[indices_to_remove] = filter_value
+
+  indices_to_remove = logits < threshold
+  logits[indices_to_remove] = filter_value
+
+  return logits
+
+def chat_with_dog(test_message, test_personality, test_history):
+    # Load trained model
+    model = GPT2DoubleHeadsModel.from_pretrained(os.path.join(model_local_path, 'trained_model_IS'))
+    # Convert model parameter tensors to CUDA tensors
+    model.to(device)
+    # Load trained Tokenizer
+    tokenizer = GPT2Tokenizer.from_pretrained(os.path.join(model_local_path, 'trained_model_IS'))
+
+    # Tokenize test inputs
+    personality = [tokenizer.encode(s.lower()) for s in test_personality]
+    history = [tokenizer.encode(s) for s in test_history]
+    history.append(tokenizer.encode(test_message))
+    test_history.append(test_message)
+    # Generate output
+    output = generate_sequence(personality, history, tokenizer, model)
+    output_text = tokenizer.decode(output, skip_special_tokens=True)
+    test_history.append(output_text)
+
+    return {"message": test_message,
+            "answer": output_text}
+    
 # this is for debugging 
 # if __name__ == "__main__":
-#     print(os.path.join(dataset_local_path, 'docker_test.jpg'))
-#     make_predict(os.path.join(dataset_local_path, 'docker_test.jpg'))
+    # test CV
+    # print(os.path.join(dataset_local_path, 'docker_test.jpg'))
+    # make_predict(os.path.join(dataset_local_path, 'docker_test.jpg'))
+
+    # test NLP
+    # download_language_model()
+    # test_message = "can you tell me your name ?"
+    # test_personality = ['I am Emma',
+    #                     'I am a Dog',
+    #                     'My gender is Female',
+    #                     'My weight is 53.0',
+    #                     'I was born on 2009',
+    #                     'I am 11 years old',
+    #                     'My breed is Retriever, Yellow Labrador',
+    #                     'My color is White/Yellow',
+    #                     'I am house trained',
+    #                     'i like to play with toys']
+    # test_history = ["Hi",
+    #                 "woof woof"]
+
+    # chat_with_dog(test_message, test_personality, test_history)
+
 
