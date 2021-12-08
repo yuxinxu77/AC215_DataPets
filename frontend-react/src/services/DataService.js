@@ -18,6 +18,10 @@ const DataService = {
     GetDogMeta: async function (obj) {
         return await axios.post(BASE_API_URL + "/getDogMeta", obj)
     },
+
+    ChatWithDog: async function(obj) {
+        return await axios.post(BASE_API_URL + "/chatwithdog", obj)
+    }
 }
 
 export default DataService;
