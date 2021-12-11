@@ -98,6 +98,8 @@ def get_all_dogs(dogs):
     return merged_dogs
 
 def load_dogs():
+    # download embeddings and dogs meta
+    download_datasets_packages()
     print("Loading dogs data...")
     # Load data into pandas dataframe
     dogs = pd.read_csv(dogs_path)
