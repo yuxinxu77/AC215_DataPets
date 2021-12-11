@@ -1,4 +1,3 @@
-
 const styles = theme => ({
     root: {
         flexGrow: 1,
@@ -14,6 +13,10 @@ const styles = theme => ({
         backgroundColor: "#ffffff",
         paddingTop: "30px",
         paddingBottom: "20px",
+    },
+    greenButton: {
+        backgroundColor: '#08815f',
+        color:"white",
     },
     dropzone: {
         flex: 1,
@@ -81,7 +84,18 @@ const styles = theme => ({
         margin: 5,
         // height: 250,
         // width: '23%',
-    }
+    },
+    paper: {
+        padding: theme.spacing(2),
+        //color: theme.palette.text.secondary,
+        width: '100%',
+    },
+    formControl: {
+        // margin: theme.spacing(3),
+        marginLeft: 24,
+        marginRight:24,
+        minWidth: 100,
+    },
 });
 
 export default styles;

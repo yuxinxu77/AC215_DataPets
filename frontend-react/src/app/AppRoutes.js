@@ -1,11 +1,10 @@
 /* eslint-disable */ 
 import React from "react";
 import { Route, Switch, Redirect } from 'react-router-dom';
-import Home from "../components/Home";
+import Browse from "../components/Browse";
 import Error404 from '../components/Error/404';
-//import Leaderboard from '../components/Leaderboard';
-//import Currentmodel from '../components/Currentmodel';
-import Donation from '../components/Donation';
+import Adopt from '../components/Adopt';
+import Rehome from '../components/Rehome';
 
 const AppRouter = (props) => {
 
@@ -14,10 +13,9 @@ const AppRouter = (props) => {
   return (
     <React.Fragment>
       <Switch>
-        <Route path="/" exact component={Home} />
-        {/* <Route path="/leaderboard" exact component={Leaderboard} /> */}
-        <Route path="/donation" exact component={Donation} />
-        {/* <Route path="/currentmodel" exact component={Currentmodel} /> */}
+        <Route path="/" exact component={Browse} />
+        <Route path="/adopt" exact component={Adopt} />
+        <Route path="/rehome" exact component={Rehome} />
         <Route component={Error404} />
       </Switch>
     </React.Fragment>

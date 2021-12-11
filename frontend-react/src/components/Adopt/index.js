@@ -5,34 +5,28 @@ import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 
 import DataService from "../../services/DataService";
-import styles from './styles';
 import 'react-chat-widget/lib/styles.css';
 
 import Grid from '@material-ui/core/Grid';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
-import Card from '@material-ui/core/Card';
-import CardMedia from '@material-ui/core/CardMedia';
-import CardContent from '@material-ui/core/CardContent';
-import CircularProgress from '@material-ui/core/CircularProgress';
-
-import Icon from "@material-ui/core/Icon";
-import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
 
 import { Widget,toggleWidget,dropMessages,addResponseMessage } from 'react-chat-widget';
+import styles from './styles';
 
-const Home = (props) => {
+const Adopt = (props) => {
     const { classes } = props;
 
-    console.log("================================== Home ======================================");
+// const Leaderboard = (props) => {
+//     const { classes } = props;
+
+    console.log("================================== Adopt ======================================");
 
     const inputFile = useRef(null);
 
     // Component States
     const [image, setImage] = useState(null);
     const [prediction, setPrediction] = useState(null);
-    const [numImages, setNumImages] = useState(12);
     const [selectedImage, setSelectedImage] = useState(null);
     const [chatDog, setChatDog] = useState(null);
     const [chatHistory, setChatHistory] = useState([]);
@@ -73,18 +67,18 @@ const Home = (props) => {
         }
     }
 
-    const isDogHighlited = (dog) => {
-        let style = {};
-        let selectedStyle = {
-            //border:"7px solid #31a354"
-            border: "7px dashed #000000",
-            opacity: 1
-        }
-        if(chatDog && (dog.AnimalInternalID == chatDog.AnimalInternalID)){
-            style = selectedStyle
-        }
-        return style;
-    }
+    // const isDogHighlited = (dog) => {
+    //     let style = {};
+    //     let selectedStyle = {
+    //         //border:"7px solid #31a354"
+    //         border: "7px dashed #000000",
+    //         opacity: 1
+    //     }
+    //     if(chatDog && (dog.AnimalInternalID == chatDog.AnimalInternalID)){
+    //         style = selectedStyle
+    //     }
+    //     return style;
+    // }
 
     const handleChatWithDog = (message) => {
         var history = [...chatHistory];
@@ -104,9 +98,7 @@ const Home = (props) => {
                 history.push(chat_response["question"]);
                 history.push(chat_response["response_message"]);
 
-                // if(history.length > 5){
-                //
-                // }
+                // control the length of history
                 history = history.slice(Math.max(history.length - 5, 0))
 
                 setChatHistory(history);
@@ -120,10 +112,25 @@ const Home = (props) => {
     }, []);
 
 
-    // Handlers
+    // Event handlers
     const handleImageUploadClick = () => {
         inputFile.current.click();
     }
+
+    const handleImageUpload = (files) => {
+        console.log(files);
+        var formData = new FormData();
+        formData.append("file", files[0]);
+        formData.append("filename", files[0]["name"]);
+
+        DataService.Predict(formData)
+            .then(function (response) {
+                console.log(response.data);
+                setPrediction(response.data);
+            })
+    };
+
+
     const handleOnChange = (event) => {
         setPrediction(null);
         console.log(event.target.files);
@@ -148,15 +155,8 @@ const Home = (props) => {
                     handleDogChat(response.data)}
                 );
     }
-
+   
     // Methods
-    const shuffle = (data) => {
-        return data
-            .map((a) => ({ sort: Math.random(), value: a }))
-            .sort((a, b) => a.sort - b.sort)
-            .map((a) => (a.value))
-            .slice(0, numImages)
-    }
     const isThumnailHighlited = (image, row) => {
         var style = {};
 
@@ -168,7 +168,6 @@ const Home = (props) => {
         if (image && (row == image)) {
             style = selectedStyle
         }
-
         return style;
     }
 
@@ -176,7 +175,6 @@ const Home = (props) => {
         <div className={classes.root}>
             <main className={classes.main}>
                 <Container maxWidth="md" className={classes.container}>
-
                     <div className={classes.dropzone} onClick={() => handleImageUploadClick()}>
                         <input
                             type="file"
@@ -228,4 +226,4 @@ const Home = (props) => {
     );
 };
 
-export default withStyles(styles)(Home);
+export default withStyles(styles)(Adopt);
