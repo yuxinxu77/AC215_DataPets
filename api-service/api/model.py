@@ -7,7 +7,7 @@ import math
 import json
 import time
 import sys
-import cv2
+import random
 import re
 import glob
 import subprocess
@@ -22,6 +22,7 @@ import matplotlib.pyplot as plt
 from itertools import chain
 
 # CV related 
+import cv2
 from api.deeplab.model import Deeplabv3
 
 from urllib.parse import urlparse
@@ -40,46 +41,119 @@ from torch.cuda import amp
 import torch.nn.functional as F
 from transformers import GPT2Config, GPT2LMHeadModel, GPT2DoubleHeadsModel, GPT2Tokenizer
 
-# define global variables
+# define all pathways here
 model_local_path = "/persistent/models"
 dataset_local_path = "/persistent/dataset"
-# CV
+gcp_path = "https://storage.googleapis.com"
+
+dogs_path = os.path.join(gcp_path, "dogs_meta", "dogs.csv")
+gcp_image_folder = os.path.join(gcp_path, "dogs_img", "dogs_resized")
+
+# CV related parameters
 IMG_SIZE = (224, 224)
 num_channels = 3
-# NLP
+
+# NLP related parameters
 SPECIAL_TOKENS = ["<bos>", "<eos>", "<speaker1>", "<speaker2>", "<pad>"]
 cuda_available = torch.cuda.is_available()
 device = torch.device("cuda:0" if cuda_available else "cpu")
 
 # main functions
 def download_file(packet_url, base_path="", file_path='', extract=False, headers=None):
-  if base_path != "":
-    if not os.path.exists(base_path):
-      os.mkdir(base_path)
-  packet_file = os.path.basename(packet_url)
-  with requests.get(packet_url, stream=True, headers=headers) as r:
-      r.raise_for_status()
-      with open(os.path.join(base_path,packet_file), 'wb') as f:
-          for chunk in r.iter_content(chunk_size=8192):
-              f.write(chunk)
-  
-  if extract:
-    if packet_file.endswith(".zip"):
-      with zipfile.ZipFile(os.path.join(base_path,packet_file)) as zfile:
-        if not os.path.exists(base_path + '/' + file_path):
-          os.mkdir(base_path + '/' + file_path)
-        zfile.extractall(base_path + '/' + file_path)
-    else:
-      packet_name = packet_file.split('.')[0]
-      with tarfile.open(os.path.join(base_path,packet_file)) as tfile:
-        tfile.extractall(base_path)
+    if base_path != "":
+        if not os.path.exists(base_path):
+            os.mkdir(base_path)
+    packet_file = os.path.basename(packet_url)
+    with requests.get(packet_url, stream=True, headers=headers) as r:
+        r.raise_for_status()
+        with open(os.path.join(base_path,packet_file), 'wb') as f:
+            for chunk in r.iter_content(chunk_size=8192):
+                f.write(chunk)
+    
+    if extract:
+        if packet_file.endswith(".zip"):
+            with zipfile.ZipFile(os.path.join(base_path,packet_file)) as zfile:
+                if not os.path.exists(base_path + '/' + file_path):
+                    os.mkdir(base_path + '/' + file_path)
+                zfile.extractall(base_path + '/' + file_path)
+        else:
+            packet_name = packet_file.split('.')[0]
+            with tarfile.open(os.path.join(base_path,packet_file)) as tfile:
+                tfile.extractall(base_path)
 
+def get_all_dogs(dogs):
+    # read in embeddings and photo csv
+    emb = pq.read_table(os.path.join(dataset_local_path, 'embeddings')).to_pandas()    
+    dogs_photos = pd.read_csv(os.path.join(dataset_local_path, 'dogs_photos.csv'))
+    dogs_photos['filename'] = dogs_photos.PhotoUrl.apply(lambda url: os.path.basename(urlparse(url).path))
+    # merge embeddigns and dogs photo
+    emb['new_image_name'] = emb.image_name.apply(lambda x: x.decode("utf-8") + ".png" ) #convert byte literal to string
+    merged_emb = emb.merge(dogs_photos,left_on='new_image_name',right_on='filename')
+    merged_emb['img'] = gcp_image_folder + '/' + merged_emb['AnimalInternal-ID'].astype(str)  + '/'   + merged_emb['new_image_name'].astype(str)
+    merged_emb = merged_emb.rename(columns={"AnimalInternal-ID": "AnimalInternalID"})
+    merged_emb = merged_emb[["AnimalInternalID", "img"]]
+    # merge emb and dogs meta
+    merged_dogs = merged_emb.merge(dogs, on="AnimalInternalID", how="left")
+
+    return merged_dogs
+
+def load_dogs():
+    print("Loading dogs data...")
+    # Load data into pandas dataframe
+    dogs = pd.read_csv(dogs_path)
+
+    # some preprocessing of the dataframe
+    dogs = dogs.rename(columns={"AnimalInternal-ID": "AnimalInternalID"})
+    dogs = dogs.drop(columns=["AnimalPattern"])
+
+    # compute age of dog
+    dogs['DOB'] = pd.to_datetime(dogs['AnimalDOB'], format='%Y%m%d')
+    dogs["Year"] = pd.DatetimeIndex(dogs['DOB']).year
+    dogs["Age"] = (pd.to_datetime('now') - dogs['DOB']).astype('<m8[Y]')
+
+    return dogs
+
+def get_dogs_meta(img, dogs):
+    dogs_id = img['img'].split("/")[-2]
+    # select the clicked dog
+    selected_dogs = dogs[dogs["AnimalInternalID"]==int(dogs_id)].to_dict('records')[0]
+    # add if training or not
+    house_trained = random.randint(0,3)
+    if house_trained == 0:
+        selected_dogs["trained"] = False
+    else:
+        selected_dogs["trained"] = True
+
+    # create personality component
+    personality = ['I am {}'.format(selected_dogs["AnimalName"]),
+        'I am a {}'.format(selected_dogs["AnimalType"]),
+        'My gender is {}'.format(selected_dogs["AnimalSex"]),
+        'My weight is {}'.format(selected_dogs["AnimalCurrentWeightPounds"]),
+        'I was born on {}'.format(selected_dogs["Year"]),
+        'I am {} years old'.format(selected_dogs["Age"]),
+        'My breed is {}'.format(selected_dogs["AnimalBreed"]),
+        'My color is {}'.format(selected_dogs["AnimalColor"])]
+    if selected_dogs["trained"]:
+        personality.append("I am house trained")
+    else:
+        personality.append("I am not house trained")
+    personality.append("I like to play with toys")
+
+    # create history component
+    history = ["Hi", "woof woof"]
+
+    return {"name":selected_dogs["AnimalName"],
+            "sex":selected_dogs["AnimalSex"],
+            "age":selected_dogs["Age"],
+            "breed":selected_dogs["AnimalBreed"],
+            "persona": personality,
+            "history": history,
+            "img": img['img']}
 
 def download_datasets_packages():
     if not os.path.exists(dataset_local_path):
         os.mkdir(dataset_local_path)
         download_file("https://storage.googleapis.com/dogs_meta/dogs_photos.csv", base_path=dataset_local_path)
-        #download_file("https://storage.googleapis.com/dogs_img/dogs_resized.zip", base_path=dataset_local_path, extract=True)
         download_file("https://storage.googleapis.com/dogs_img/embeddings.zip", base_path=dataset_local_path, file_path='embeddings', extract=True)
     
     # deeply troubleshoot, could not make it work. 
@@ -179,13 +253,12 @@ def search(search_emb, k=8):
 
 
 def make_predict(image_path):
-    gcp_address = "https://storage.googleapis.com/dogs_img/dogs_resized/"
     img_embedd = load_preprocess_image(image_path)
     pred_image = search(img_embedd)
     # output json file
     pred_list = []
     for i, filename in enumerate(list(zip(*pred_image))[1]):
-        pred_list.append(gcp_address+filename)
+        pred_list.append(gcp_image_folder + '/' + filename)
     
     return pred_list
 
@@ -213,74 +286,73 @@ def build_input_from_segments(persona, history, reply, tokenizer, lm_labels=Fals
 
 
 def generate_sequence(personality, history, tokenizer, model, current_output=None):
-  with torch.no_grad():
-    with amp.autocast():
-      special_tokens_ids = tokenizer.convert_tokens_to_ids(SPECIAL_TOKENS)
-      if current_output is None:
-          current_output = []
+    with torch.no_grad():
+        with amp.autocast():
+            special_tokens_ids = tokenizer.convert_tokens_to_ids(SPECIAL_TOKENS)
+            if current_output is None:
+                current_output = []
 
-      # Args
-      max_length = 20
-      temperature = 0.7
-      top_k = 0
-      top_p = 0.9
-      do_sample = True
-      min_length = 1
+            # Args
+            max_length = 20
+            temperature = 0.7
+            top_k = 0
+            top_p = 0.9
+            do_sample = True
+            min_length = 1
 
-      for i in range(max_length):
-          instance = build_input_from_segments(
-              personality, history, current_output, tokenizer, with_eos=False
-          )
+            for i in range(max_length):
+                instance = build_input_from_segments(
+                    personality, history, current_output, tokenizer, with_eos=False
+                )
 
-          input_ids = torch.tensor(instance["input_ids"], device=device).unsqueeze(0)
-          token_type_ids = torch.tensor(instance["token_type_ids"], device=device).unsqueeze(0)
+                input_ids = torch.tensor(instance["input_ids"], device=device).unsqueeze(0)
+                token_type_ids = torch.tensor(instance["token_type_ids"], device=device).unsqueeze(0)
 
-          logits = model(input_ids, token_type_ids=token_type_ids)
-          logits = logits[0]
+                logits = model(input_ids, token_type_ids=token_type_ids)
+                logits = logits[0]
 
-          logits = logits[0, -1, :] / temperature
-          logits = top_filtering(logits, top_k=top_k, top_p=top_p)
-          probs = F.softmax(logits, dim=-1)
+                logits = logits[0, -1, :] / temperature
+                logits = top_filtering(logits, top_k=top_k, top_p=top_p)
+                probs = F.softmax(logits, dim=-1)
 
-          prev = torch.topk(probs, 1)[1] if not do_sample else torch.multinomial(probs, 1)
-          if i < min_length and prev.item() in special_tokens_ids:
-              while prev.item() in special_tokens_ids:
-                  if probs.max().item() == 1:
-                      break  # avoid infinite loop
-                  prev = torch.multinomial(probs, num_samples=1)
+                prev = torch.topk(probs, 1)[1] if not do_sample else torch.multinomial(probs, 1)
+                if i < min_length and prev.item() in special_tokens_ids:
+                    while prev.item() in special_tokens_ids:
+                        if probs.max().item() == 1:
+                            break  # avoid infinite loop
+                        prev = torch.multinomial(probs, num_samples=1)
 
-          if prev.item() in special_tokens_ids:
-              break
-          current_output.append(prev.item())
-
-  return current_output
+                if prev.item() in special_tokens_ids:
+                    break
+                current_output.append(prev.item())
+    return current_output
 
 def top_filtering(logits, top_k=0.0, top_p=0.9, threshold=-float("Inf"), filter_value=-float("Inf")):
-  top_k = min(top_k, logits.size(-1))
-  if top_k > 0:
-      # Remove all tokens with a probability less than the last token in the top-k tokens
-      indices_to_remove = logits < torch.topk(logits, top_k)[0][..., -1, None]
-      logits[indices_to_remove] = filter_value
+    top_k = min(top_k, logits.size(-1))
+    if top_k > 0:
+        # Remove all tokens with a probability less than the last token in the top-k tokens
+        indices_to_remove = logits < torch.topk(logits, top_k)[0][..., -1, None]
+        logits[indices_to_remove] = filter_value
 
-  if top_p > 0.0:
-      # Compute cumulative probabilities of sorted tokens
-      sorted_logits, sorted_indices = torch.sort(logits, descending=True)
-      cumulative_probabilities = torch.cumsum(F.softmax(sorted_logits, dim=-1), dim=-1)
+    if top_p > 0.0:
+        # Compute cumulative probabilities of sorted tokens
+        sorted_logits, sorted_indices = torch.sort(logits, descending=True)
+        cumulative_probabilities = torch.cumsum(F.softmax(sorted_logits, dim=-1), dim=-1)
 
-      # Remove tokens with cumulative probability above the threshold
-      sorted_indices_to_remove = cumulative_probabilities > top_p
-      # Shift the indices to the right to keep also the first token above the threshold
-      sorted_indices_to_remove[..., 1:] = sorted_indices_to_remove[..., :-1].clone()
-      sorted_indices_to_remove[..., 0] = 0
+        # Remove tokens with cumulative probability above the threshold
+        sorted_indices_to_remove = cumulative_probabilities > top_p
+        # Shift the indices to the right to keep also the first token above the threshold
+        sorted_indices_to_remove[..., 1:] = sorted_indices_to_remove[..., :-1].clone()
+        sorted_indices_to_remove[..., 0] = 0
 
-      # Back to unsorted indices and set them to -infinity
-      indices_to_remove = sorted_indices[sorted_indices_to_remove]
-      logits[indices_to_remove] = filter_value
+        # Back to unsorted indices and set them to -infinity
+        indices_to_remove = sorted_indices[sorted_indices_to_remove]
+        logits[indices_to_remove] = filter_value
 
-  indices_to_remove = logits < threshold
-  logits[indices_to_remove] = filter_value
+    indices_to_remove = logits < threshold
+    logits[indices_to_remove] = filter_value
 
-  return logits
+    return logits
 
 def chat_with_dog(test_message, test_personality, test_history):
     # Load trained model

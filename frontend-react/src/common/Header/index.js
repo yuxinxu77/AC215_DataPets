@@ -59,24 +59,19 @@ const Header = (props) => {
 
                     <div className={classes.grow} />
 
-
                     <div>
                         <IconButton color="inherit" component={Link} to="/">
-                            <Icon>home</Icon>
-                            <Typography variant="caption">&nbsp;Home</Typography>
+                            <Icon>search</Icon>
+                            <Typography variant="caption">&nbsp;Browse</Typography>
                         </IconButton>
-                        <IconButton color="inherit" component={Link} to="/donation">
+                        <IconButton color="inherit" component={Link} to="/adopt">
                             <Icon>pets</Icon>
-                            <Typography variant="caption">&nbsp;Donation</Typography>
+                            <Typography variant="caption">&nbsp;Adopt</Typography>
                         </IconButton>
-                        {/* <IconButton color="inherit" component={Link} to="/currentmodel">
-                            <Icon>model_training</Icon>
-                            <Typography variant="caption">&nbsp;Model</Typography>
-                        </IconButton> */}
-                        {/* <IconButton color="inherit">
-                            <Icon>login</Icon>
-                            <Typography variant="caption">&nbsp;Login</Typography>
-                        </IconButton> */}
+                        <IconButton color="inherit" component={Link} to="/rehome">
+                            <Icon>home</Icon>
+                            <Typography variant="caption">&nbsp;Rehome</Typography>
+                        </IconButton>
                     </div>
                 </Toolbar>
             </AppBar>
@@ -90,26 +85,25 @@ const Header = (props) => {
                     <div className={classes.list}>
                         <List>
                             <ListItem button key='home' component={Link} to="/">
-                                <ListItemIcon><Icon>home</Icon></ListItemIcon>
-                                <ListItemText primary='Home' />
+                                <ListItemIcon><Icon>search</Icon></ListItemIcon>
+                                <ListItemText primary='Browse' />
                             </ListItem>
                         </List>
-                        <Divider />
+                        {/* <Divider /> */}
                         <List>
                                   
-                            <ListItem button key='menuitem12' component={Link} to="/donation">
+                            <ListItem button key='menuitem12' component={Link} to="/adopt">
                                 <ListItemIcon><Icon>pets</Icon></ListItemIcon>
-                                <ListItemText primary='Donation' />
+                                <ListItemText primary='Adopt' />
                             </ListItem>
-
                         </List>
-                        {/* <List>
-                            <ListItem button key='menuitem12' component={Link} to="/currentmodel">
-                                <ListItemIcon><Icon>star</Icon></ListItemIcon>
-                                <ListItemText primary='Current Model' />
+                        <List>
+                            <ListItem button key='menuitem12' component={Link} to="/rehome">
+                                <ListItemIcon><Icon>home</Icon></ListItemIcon>
+                                <ListItemText primary='Rehome' />
 
                             </ListItem>
-                        </List> */}
+                        </List>
                     </div>
                 </div>
             </Drawer>
