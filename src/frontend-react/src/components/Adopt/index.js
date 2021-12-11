@@ -3,10 +3,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { withStyles } from '@material-ui/core';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
-
 import DataService from "../../services/DataService";
 import 'react-chat-widget/lib/styles.css';
-
 import Grid from '@material-ui/core/Grid';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
@@ -16,9 +14,6 @@ import styles from './styles';
 
 const Adopt = (props) => {
     const { classes } = props;
-
-// const Leaderboard = (props) => {
-//     const { classes } = props;
 
     console.log("================================== Adopt ======================================");
 
@@ -130,7 +125,6 @@ const Adopt = (props) => {
             })
     };
 
-
     const handleOnChange = (event) => {
         setPrediction(null);
         console.log(event.target.files);
@@ -164,7 +158,6 @@ const Adopt = (props) => {
             border: "7px dashed #000000",
             opacity: 1
         }
-
         if (image && (row == image)) {
             style = selectedStyle
         }
