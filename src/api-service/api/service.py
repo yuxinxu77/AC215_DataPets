@@ -47,7 +47,7 @@ async def get_index():
 @app.get("/getdogs")
 async def getDogs():
     dogs = load_dogs()
-    display_dogs = model.get_all_dogs(dogs).sample(n=100, replace=False)
+    display_dogs = model.get_all_dogs(dogs).sample(n=200, replace=False)
     return display_dogs.to_dict(orient='records')
 
 @app.post("/findfilterdogs")

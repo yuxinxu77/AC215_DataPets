@@ -38,6 +38,9 @@ const styles = theme => ({
         backgroundPosition: "center",
         minHeight: "400px",
     },
+    cardHovered: {
+        transform: "scale3d(1.05, 1.05, 1)"
+    },
     fileInput: {
         display: "none",
     },
@@ -59,12 +62,6 @@ const styles = theme => ({
         height: 300,
         width: 900,
     },
-    thumbnailImage: {
-        opacity: 0.80,
-        '&:hover': {
-            opacity: 1
-        }
-    },
     predictionImage: {
         height: 0,
         paddingTop: '100%',
@@ -72,16 +69,30 @@ const styles = theme => ({
     },
     progressBar: {
         position: "absolute",
-        top: "300px",
+        top: "200px",
         left: "48%",
-        color: "#ffffff"
     },
     media: {
         height: 0,
         paddingTop: '100%',
+        opacity: 1,
+        '&:hover': {
+            opacity: 0.35
+        }
     },
+    overlay: {
+        position: 'absolute',
+        top: '20px',
+        left: '10px',
+        right: '10px',
+        textAlign: "center",
+        color: "black",
+        backgroundColor: "none",
+        fontFamily: "Comic Sans MS"
+     },
     card: {
         margin: 5,
+        position: 'relative',
         // height: 250,
         // width: '23%',
     },

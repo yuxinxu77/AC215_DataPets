@@ -46,8 +46,6 @@ const Browse = (props) => {
 
     const [dogs, setDogs] = useState(null);
     const [numImages, setNumImages] = useState(12);
-    const [chatDog, setChatDog] = useState(null);
-    const [chatHistory, setChatHistory] = useState([]);
 
     // Store the list of breeds
     const [breeds, setBreeds] = useState([]);
@@ -58,133 +56,20 @@ const Browse = (props) => {
                 setBreeds(response.data);
             })
     }
-
-    // // Chat 
-    // const handleDogChat = (dog) => {
-    //     dropMessages();
-    //     console.log(dog);
-    //     //setChatDog(dog);
-    //     if (isChatWidgetOpen()){
-    //         //toggleWidget();
-    //     }
-    //     addResponseMessage("Woof Woof! I'm " + dog.name + ".")
-    //     addResponseMessage("Ask me anything.")
-    // }
-
-    // const displayChatWindow = () =>{
-    //     if(!chatDog){
-    //         return false;
-    //     }else{
-    //         return true;
-    //     }
-    // }
-
-    // const closeChatWindow = () =>{
-    //     dropMessages();
-    //     if (!isChatWidgetOpen()){
-    //         toggleWidget();
-    //     }
-    //     setChatDog(null);
-    // }
-
-    // const isChatWidgetOpen = () => {
-    //     if(!chatDog){
-    //         return false;
-    //     }else{
-    //         return true;
-    //     }
-    // }
-
-    // const isDogHighlited = (dog) => {
-    //     let style = {};
-    //     let selectedStyle = {
-    //         //border:"7px solid #31a354"
-    //         border: "7px dashed #000000",
-    //         opacity: 1
-    //     }
-    //     if(chatDog && (dog.AnimalInternalID == chatDog.AnimalInternalID)){
-    //         style = selectedStyle
-    //     }
-    //     return style;
-    // }
-
-    // const handleChatWithDog = (message) => {
-    //     var history = [...chatHistory];
-    //     console.log(message);
-    //     let chat = {
-    //         "personality":chatDog.persona,
-    //         "history": chatDog.history,
-    //         "message":message
-    //     }
-    //     // Chat with backend API
-    //     DataService.ChatWithDog(chat)
-    //         .then(function (response) {
-    //             console.log(response.data);
-    //             let chat_response = response.data;
-    //             addResponseMessage(chat_response["answer"]);
-    //             console.log(chat_response)
-    //             history.push(chat_response["question"]);
-    //             history.push(chat_response["response_message"]);
-
-    //             // control the length of history
-    //             history = history.slice(Math.max(history.length - 5, 0))
-
-    //             setChatHistory(history);
-    //             console.log(history)
-    //         })
-    // }
+    // Set card state when hovering
+    const [state, setState] = useState({
+        raised: [...new Array(numImages)].map((item, idx) => false),
+        shadow: [...new Array(numImages)].map((item, idx) => 1),
+      })
 
     // Setup Component
     useEffect(() => {
         getDogs();
-        //closeChatWindow();
         loadBreeds();
     }, []);
 
 
     // Event handlers
-    // const handleImageUploadClick = () => {
-    //     inputFile.current.click();
-    // }
-
-    // const handleImageUpload = (files) => {
-    //     console.log(files);
-    //     var formData = new FormData();
-    //     formData.append("file", files[0]);
-    //     formData.append("filename", files[0]["name"]);
-
-    //     DataService.Predict(formData)
-    //         .then(function (response) {
-    //             console.log(response.data);
-    //             setPrediction(response.data);
-    //         })
-    // };
-
-
-    // const handleOnChange = (event) => {
-    //     setPrediction(null);
-    //     console.log(event.target.files);
-    //     setImage(URL.createObjectURL(event.target.files[0]));
-
-    //     var formData = new FormData();
-    //     formData.append("file", event.target.files[0]);
-    //     DataService.Predict(formData)
-    //         .then(function (response) {
-    //             console.log(response.data);
-    //             setPrediction(response.data);
-    //         })
-    // }
-    // const ImageClicked = (img) => {
-    //     //dropMessages();
-    //     setSelectedImage(img);
-    //     console.log(img);
-    //     DataService.GetDogMeta({"img": img})
-    //             .then(function (response) {
-    //                 console.log(response.data);
-    //                 setChatDog(response.data);
-    //                 handleDogChat(response.data)}
-    //             );
-    // }
     const handleBreedChange = (event) => {
         setFilterBreed(event.target.value);
         //console.log(event.target.value);
@@ -242,7 +127,6 @@ const Browse = (props) => {
     return (
         <div className={classes.root}>
             <main className={classes.main}>
-
                 <Container fixed style={{paddingLeft:75,paddingRight:75,paddingTop:50}}>
                         <Grid container spacing={3}>
                             <Paper className={classes.paper}>
@@ -291,36 +175,47 @@ const Browse = (props) => {
                                 <FormControl >
                                     <Button className={classes.greenButton} variant="contained" size="large" style={{paddingTop:15, paddingBottom:15}}
                                             onClick={findFilterDogs}>
-                                        Fetch Dogs
+                                        Fetch My Dogs!
                                     </Button>
                                 </FormControl>
                           
                             </Paper>
                         </Grid>
                 </Container>
-
+                {!dogs &&
+                    <CircularProgress className={classes.progressBar} disableShrink />
+                }
                 {dogs &&
                     <Container fixed style={{paddingLeft:60,paddingRight:60, paddingTop:20, paddingBottom:20}}>
                         <Grid container spacing={0}>
-                            {dogs.map((dog) => (
+                            {dogs.map((dog,i) => (
                                 <Grid key={dog.AnimalID} item xs={4}>
-                                    <Card className={classes.card} style={isThumnailHighlited(dog)}>
+                                    <Card className={classes.card} style={isThumnailHighlited(dog.img)}
+                                          classes={{root: state.raised[i] ? classes.cardHovered : ""}}
+                                          onMouseOver={()=>setState({ raised:[...new Array(numImages)].map((item, idx) => 
+                                                                              idx === i ? true : false), 
+                                                                      shadow:[...new Array(numImages)].map((item, idx) => 
+                                                                              idx === i ? 3 : 1)})}  
+                                          onMouseOut={()=>setState({ raised:[...new Array(numImages)].map((item, idx) => false),
+                                                                     shadow:[...new Array(numImages)].map((item, idx) => 1)})}  
+                                                                             
+                                          raised={state.raised[i]} zdepth={state.shadow[i]}>
                                         <CardMedia
                                             className={classes.media}
                                             image={dog.img}
                                             title={dog.AnimalName}
                                         />
+                                        {state.raised[i] &&
+                                            <div className={classes.overlay}>
+                                                About Me:
+                                                <br />
+                                                {dog.MemoText}
+                                            </div>
+                                        }
                                         <CardHeader
                                             title={dog.AnimalName}
                                             subheader={dog.AnimalBreed+', '+dog.Age+' year(s)'}
                                         />
-                                        {/* <CardActions disableSpacing>
-                                            <Checkbox
-                                                color="primary"
-                                                value={dog.ImageID}
-                                                onChange={handleSelectDog}
-                                            />
-                                        </CardActions> */}
                                     </Card>
                                 </Grid>
                             ))}

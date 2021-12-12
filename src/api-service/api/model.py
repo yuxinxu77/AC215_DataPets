@@ -86,14 +86,20 @@ def get_all_dogs(dogs):
     emb = pq.read_table(os.path.join(dataset_local_path, 'embeddings')).to_pandas()    
     dogs_photos = pd.read_csv(os.path.join(dataset_local_path, 'dogs_photos.csv'))
     dogs_photos['filename'] = dogs_photos.PhotoUrl.apply(lambda url: os.path.basename(urlparse(url).path))
+    # dogs memo
+    dogs_memo = pd.read_csv(os.path.join(dataset_local_path, "dogs_memos_processed_IS.csv"))
+    dogs_memo = dogs_memo.rename(columns={"AnimalInternal-ID": "AnimalInternalID"})
     # merge embeddigns and dogs photo
     emb['new_image_name'] = emb.image_name.apply(lambda x: x.decode("utf-8") + ".png" ) #convert byte literal to string
     merged_emb = emb.merge(dogs_photos,left_on='new_image_name',right_on='filename')
     merged_emb['img'] = gcp_image_folder + '/' + merged_emb['AnimalInternal-ID'].astype(str)  + '/'   + merged_emb['new_image_name'].astype(str)
     merged_emb = merged_emb.rename(columns={"AnimalInternal-ID": "AnimalInternalID"})
     merged_emb = merged_emb[["AnimalInternalID", "img"]]
-    # merge emb and dogs meta
+    # merge emb and dogs meta and dogs memos
     merged_dogs = merged_emb.merge(dogs, on="AnimalInternalID", how="left")
+    merged_dogs = merged_dogs.merge(dogs_memo, on="AnimalInternalID", how="left")
+    # fill na values in memo columns
+    merged_dogs = merged_dogs.fillna(value="Info available yet, coming up soon ...")
 
     return merged_dogs
 
@@ -103,11 +109,9 @@ def load_dogs():
     print("Loading dogs data...")
     # Load data into pandas dataframe
     dogs = pd.read_csv(dogs_path)
-
     # some preprocessing of the dataframe
     dogs = dogs.rename(columns={"AnimalInternal-ID": "AnimalInternalID"})
     dogs = dogs.drop(columns=["AnimalPattern"])
-
     # compute age of dog
     dogs['DOB'] = pd.to_datetime(dogs['AnimalDOB'], format='%Y%m%d')
     dogs["Year"] = pd.DatetimeIndex(dogs['DOB']).year
@@ -156,6 +160,7 @@ def download_datasets_packages():
     if not os.path.exists(dataset_local_path):
         os.mkdir(dataset_local_path)
         download_file("https://storage.googleapis.com/dogs_meta/dogs_photos.csv", base_path=dataset_local_path)
+        download_file("https://storage.googleapis.com/dogs_text/dogs_memos_processed_IS.csv", base_path=dataset_local_path, extract=False)
         download_file("https://storage.googleapis.com/dogs_img/embeddings.zip", base_path=dataset_local_path, file_path='embeddings', extract=True)
     
     # deeply troubleshoot, could not make it work. 
