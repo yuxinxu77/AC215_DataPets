@@ -46,6 +46,16 @@ const styles = theme => ({
         height: "400px",
         backgroundPosition: "center",
     },
+    overlay: {
+        position: 'absolute',
+        top: '20px',
+        left: '10px',
+        right: '10px',
+        textAlign: "center",
+        color: "black",
+        backgroundColor: "none",
+        fontFamily: "Comic Sans MS"
+    },
     previewgrid: {
         width: "200px",
         height: "200px",

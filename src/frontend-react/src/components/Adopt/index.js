@@ -62,19 +62,6 @@ const Adopt = (props) => {
         }
     }
 
-    // const isDogHighlited = (dog) => {
-    //     let style = {};
-    //     let selectedStyle = {
-    //         //border:"7px solid #31a354"
-    //         border: "7px dashed #000000",
-    //         opacity: 1
-    //     }
-    //     if(chatDog && (dog.AnimalInternalID == chatDog.AnimalInternalID)){
-    //         style = selectedStyle
-    //     }
-    //     return style;
-    // }
-
     const handleChatWithDog = (message) => {
         var history = [...chatHistory];
         console.log(message);
@@ -112,18 +99,18 @@ const Adopt = (props) => {
         inputFile.current.click();
     }
 
-    const handleImageUpload = (files) => {
-        console.log(files);
-        var formData = new FormData();
-        formData.append("file", files[0]);
-        formData.append("filename", files[0]["name"]);
+    // const handleImageUpload = (files) => {
+    //     console.log(files);
+    //     var formData = new FormData();
+    //     formData.append("file", files[0]);
+    //     formData.append("filename", files[0]["name"]);
 
-        DataService.Predict(formData)
-            .then(function (response) {
-                console.log(response.data);
-                setPrediction(response.data);
-            })
-    };
+    //     DataService.Predict(formData)
+    //         .then(function (response) {
+    //             console.log(response.data);
+    //             setPrediction(response.data);
+    //         })
+    // };
 
     const handleOnChange = (event) => {
         setPrediction(null);
