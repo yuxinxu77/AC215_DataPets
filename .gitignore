@@ -130,3 +130,6 @@ dmypy.json
 persistent-folder/
 
 *.DS_Store
+
+# remove secrect folder
+secrets/
