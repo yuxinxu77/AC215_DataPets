@@ -85,7 +85,7 @@ const styles = theme => ({
         position: "absolute",
         top: "300px",
         left: "48%",
-        color: "#ffffff"
+        //color: "#ffffff"
     },
     media: {
         height: 0,
@@ -101,6 +101,16 @@ const styles = theme => ({
         //color: theme.palette.text.secondary,
         width: '100%',
     },
+    overlay: {
+        position: 'absolute',
+        top: '20px',
+        left: '10px',
+        right: '10px',
+        textAlign: "center",
+        color: "black",
+        backgroundColor: "none",
+        fontFamily: "Comic Sans MS"
+     },
     formControl: {
         // margin: theme.spacing(3),
         marginLeft: 24,

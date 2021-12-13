@@ -37,8 +37,8 @@ app.add_middleware(
 @app.get("/")
 async def get_index():
     # download datasets and models
-    model.download_datasets_packages()
-    model.download_language_model()
+    # model.download_datasets_packages()
+    # model.download_language_model()
 
     return {
         "message": "Welcome to the Data Pets API Service"
@@ -46,6 +46,7 @@ async def get_index():
 
 @app.get("/getdogs")
 async def getDogs():
+
     dogs = load_dogs()
     display_dogs = model.get_all_dogs(dogs).sample(n=200, replace=False)
     return display_dogs.to_dict(orient='records')
@@ -84,7 +85,7 @@ async def predict(
     print("predict file:", len(file), type(file))
 
     # download packages
-    # model.download_datasets_packages()
+    model.download_datasets_packages()
     
     # Save the image
     with TemporaryDirectory() as image_dir:
@@ -100,7 +101,7 @@ async def predict(
 @app.post("/chatwithdog")
 async def chatwithdog(messages: dict):
     # download language model
-    # model.download_language_model()
+    model.download_language_model()
     # get the result
     results = model.chat_with_dog(messages['message'], messages['personality'], messages['history'])
     

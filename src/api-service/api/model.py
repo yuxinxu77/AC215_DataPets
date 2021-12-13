@@ -99,13 +99,14 @@ def get_all_dogs(dogs):
     merged_dogs = merged_emb.merge(dogs, on="AnimalInternalID", how="left")
     merged_dogs = merged_dogs.merge(dogs_memo, on="AnimalInternalID", how="left")
     # fill na values in memo columns
-    merged_dogs = merged_dogs.fillna(value="Info available yet, coming up soon ...")
+    merged_dogs = merged_dogs.fillna(value="Info not available yet, coming up soon ...")
 
     return merged_dogs
 
 def load_dogs():
     # download embeddings and dogs meta
     download_datasets_packages()
+    download_language_model()
     print("Loading dogs data...")
     # Load data into pandas dataframe
     dogs = pd.read_csv(dogs_path)

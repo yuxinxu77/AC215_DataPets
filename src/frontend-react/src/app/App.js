@@ -11,7 +11,7 @@ import Content from "../common/Content";
 import Header from "../common/Header";
 import Footer from "../common/Footer";
 import DataService from '../services/DataService';
-
+//import FlashMessage from "react-native-flash-message";
 
 const App = (props) => {
 
@@ -30,6 +30,7 @@ const App = (props) => {
           <Content>
             <AppRoutes />
           </Content>
+          {/* <FlashMessage position="top" /> */}
           <Footer></Footer>
         </Router>
       </ThemeProvider>
