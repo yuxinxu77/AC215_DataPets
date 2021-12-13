@@ -6,8 +6,11 @@ import Typography from '@material-ui/core/Typography';
 import DataService from "../../services/DataService";
 import 'react-chat-widget/lib/styles.css';
 import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
+
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { Widget,toggleWidget,dropMessages,addResponseMessage } from 'react-chat-widget';
 import styles from './styles';
@@ -99,19 +102,6 @@ const Adopt = (props) => {
         inputFile.current.click();
     }
 
-    // const handleImageUpload = (files) => {
-    //     console.log(files);
-    //     var formData = new FormData();
-    //     formData.append("file", files[0]);
-    //     formData.append("filename", files[0]["name"]);
-
-    //     DataService.Predict(formData)
-    //         .then(function (response) {
-    //             console.log(response.data);
-    //             setPrediction(response.data);
-    //         })
-    // };
-
     const handleOnChange = (event) => {
         setPrediction(null);
         console.log(event.target.files);
@@ -155,6 +145,11 @@ const Adopt = (props) => {
         <div className={classes.root}>
             <main className={classes.main}>
                 <Container maxWidth="md" className={classes.container}>
+                    {/* <Typography variant="h5" gutterBottom align='center'>
+                        This page helps you to find your ideal dog in no time. You can do so by uploading an image of dog 
+                        and we will try our best to find you your best matches.
+                        <br />
+                    </Typography> */}
                     <div className={classes.dropzone} onClick={() => handleImageUploadClick()}>
                         <input
                             type="file"
@@ -170,7 +165,6 @@ const Adopt = (props) => {
                         <div><img className={classes.preview} src={image} /></div>
                         <div className={classes.help}>Click to take a picture or upload...</div>
                     </div>
-                    
                     {prediction &&
                         <Typography variant="h5" gutterBottom align='center'>Dogs Found from Database
                             <Grid container spacing={3}>

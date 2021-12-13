@@ -178,7 +178,6 @@ const Browse = (props) => {
                                         Fetch My Dogs!
                                     </Button>
                                 </FormControl>
-                          
                             </Paper>
                         </Grid>
                 </Container>
