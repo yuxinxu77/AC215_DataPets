@@ -141,3 +141,12 @@ Our App requires our deployment of the following containers
 
 `Frontend-React` - where the frontend appearance of the app will be ran including the model's output of similar dogs interface. We will also include the chatbox interface in the React frontend after connecting our NLP model.
 
+**Reference**:
+1. EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks, Mingxing Tan et al.
+2. FAISS, Facebook AI Similarity Search.
+3. DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs, Liang-Chieh Chen et al. 
+4. SQuAD, Stanford Question Answering Dataset.
+5. 2021 Harvard IACS ComputeFest Computer Vision Task Notebook.
+6. Question Answering with a Fine-Tuned BERT, Chris McCormick.
+7. 2021 Harvard IACS ComputeFest GitHub Repository.
+8. Personalizing Dialogue Agents: I have a dog, do you have pets too?, Saizheng Zhang et al.
