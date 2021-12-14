@@ -46,6 +46,10 @@ estions about puppies and dogs.
       │             ├── docker-shell.sh
       │             └── inventory.yml
       ├── frontend-html/ (simple frontend)                  <- HTML version of frontend simple
+      │             ├── Dockerfile
+      │             ├── docker-shell.sh
+      │             ├── index.html
+      │             ├── predict.html
       ├── frontend-react/
       │             ├── src/
       │             │            ├── app/                                 
