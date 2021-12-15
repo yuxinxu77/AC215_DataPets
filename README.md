@@ -48,7 +48,7 @@ estions about puppies and dogs.
       │             ├── docker-entrypoint.sh
       │             ├── docker-shell.sh
       │             └── inventory.yml
-      ├── src.frontend-html/ (simple frontend)                  <- HTML version of frontend simple
+      ├── src/frontend-html/ (simple frontend)                  <- HTML version of frontend simple
       │             ├── Dockerfile
       │             ├── docker-shell.sh
       │             ├── index.html
