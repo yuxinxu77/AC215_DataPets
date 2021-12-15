@@ -67,7 +67,6 @@ estions about puppies and dogs.
       │             ├── package.json
       │             └── yarn.lock
       ├── README.md
-      ├── secrets/                                          <- stores the *.jsons(bucket, deployment, gcp-service)
       ├── submissions
       │             ├── milestone1_DataPets
       │             ├── milestone2_DataPets
