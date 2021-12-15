@@ -142,6 +142,7 @@ Our App requires our deployment of the following containers
 `Frontend-React` - where the frontend appearance of the app will be ran including the model's output of similar dogs interface. We will also include the chatbox interface in the React frontend after connecting our NLP model.
 
 **Medium Post**:
+ 
 A detailed description about the project could be found at Medium at https://medium.com/@guanhuas/an-end-to-end-approach-leveraging-computer-vision-nlp-to-enable-better-pet-adoption-matching-41327437dec5
 
 **Reference**:
