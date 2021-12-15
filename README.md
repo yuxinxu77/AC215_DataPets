@@ -26,14 +26,17 @@ estions about puppies and dogs.
 ------------
       .
       ├── LICENSE
-      ├── api-service/
+      ├── src/
+      │             ├── __init__.py
+      │             └── build_features.py
+      ├── src/api-service/
       │             ├── api/                               <- Where we currently have the Deeplab model
       │             ├── Dockerfile                               
       │             ├── Pipfile
       │             ├── Pipfile.lock
       │             ├── docker-entrypoint.sh
       │             └── docker-shell.sh
-      ├── deployment/
+      ├── src/deployment/
       │             ├── Dockerfile
       │             ├── ansible.cfg
       │             ├── deploy-create-instance.yml
@@ -45,12 +48,12 @@ estions about puppies and dogs.
       │             ├── docker-entrypoint.sh
       │             ├── docker-shell.sh
       │             └── inventory.yml
-      ├── frontend-html/ (simple frontend)                  <- HTML version of frontend simple
+      ├── src.frontend-html/ (simple frontend)                  <- HTML version of frontend simple
       │             ├── Dockerfile
       │             ├── docker-shell.sh
       │             ├── index.html
       │             ├── predict.html
-      ├── frontend-react/
+      ├── src/frontend-react/
       │             ├── src/
       │             │            ├── app/                                 
       │             │            ├── common/                <- common folder for React app   
@@ -65,9 +68,6 @@ estions about puppies and dogs.
       │             └── yarn.lock
       ├── README.md
       ├── secrets/                                          <- stores the *.jsons(bucket, deployment, gcp-service)
-      ├── src/
-      │             ├── __init__.py
-      │             └── build_features.py
       ├── submissions
       │             ├── milestone1_DataPets
       │             ├── milestone2_DataPets
@@ -140,6 +140,9 @@ Our App requires our deployment of the following containers
 `Deployment` - where the Data Pets app is deployed using ansible in GCP instance.
 
 `Frontend-React` - where the frontend appearance of the app will be ran including the model's output of similar dogs interface. We will also include the chatbox interface in the React frontend after connecting our NLP model.
+
+**Medium Post**:
+A detailed description about the project could be found at Medium at https://medium.com/@guanhuas/an-end-to-end-approach-leveraging-computer-vision-nlp-to-enable-better-pet-adoption-matching-41327437dec5
 
 **Reference**:
 1. EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks, Mingxing Tan et al.
